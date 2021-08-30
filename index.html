@@ -8,14 +8,16 @@
   const renderer = new THREE.WebGLRenderer();
   let ball = 0;
   const gltf_loader = new GLTFLoader();
-
   // ambient light
   var ambientLight = new THREE.HemisphereLight( 0xffffbb, 0xffffbb, 10.0 );
   scene.add( ambientLight );
 
-    const light = new THREE.DirectionalLight(0xFFFFFF, 5);
-    light.position.set(-1, 2, 4);
-    scene.add(light);
+  // sphere controls
+  let speedX = 0; let speedZ = 0;
+  let heldLeft = 0; let heldRight = 0; let heldUp = 0; let heldDown = 0;
+
+    const light = new THREE.PointLight(0xFFFFFF, 5);
+    camera.add(light);
 
   scene.add( camera );
   scene.add(new THREE.AxesHelper(5));
@@ -25,8 +27,10 @@
   gltf_loader.load('data/models/ball/ball.glb', (balltmp) => {
       ball = balltmp;
       console.log(ball);
+      camera.position.x = -20; camera.rotation.x = -2.45;
+      camera.position.y = 20; camera.rotation.y = -0.5;
+      camera.position.z = -25; camera.rotation.z = -2.73;
       scene.add(ball.scene);
-      camera.position.z = 10;
     },
   // called when loading is in progresses
   function ( xhr ) {
@@ -43,21 +47,67 @@
   );
   
   // Initialize the renderer
-  renderer.setSize(320,240);
+  renderer.setSize(640,480);
   document.body.appendChild(renderer.domElement);
-  var controls = new OrbitControls( camera, renderer.domElement );
+  //var controls = new OrbitControls( camera, renderer.domElement );
   // Draw Function
   function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
-    ball.scene.rotation.x += .01;
-    ball.scene.rotation.y += .01;
-    ball.scene.rotation.z += .01;
+    speedX += ((heldRight - heldLeft) / 350); speedZ -= ((heldDown - heldUp) / 350);
+    if(speedX >= 0.000000000001) {speedX -= 0.001;} if(speedX < -0.000000000001) {speedX += (0.001);}
+    if(speedZ >= 0.000000000001) {speedZ -= 0.001;} if(speedZ < -0.000000000001) {speedZ += (0.001);}
+    camera.position.x -= speedX; ball.scene.position.x -= speedX; ball.scene.rotation.x += speedZ; 
+    camera.position.z += speedZ; ball.scene.position.z += speedZ; ball.scene.rotation.z += speedX;
+    document.querySelector('.debug').innerHTML = "x"+speedX+" z"+speedZ+"<br>"+heldRight+" "+heldLeft+" "+heldDown+" "+heldUp;
   }
+
+  // Controls
+  document.addEventListener('keydown', function(e) {
+    switch(e.key) {
+      case 'ArrowRight':
+      case 'd':
+        heldRight = 1;
+        break;
+      case 'ArrowLeft':
+      case 'a':
+        heldLeft = 1;
+        break;
+      case 'ArrowUp':
+      case 'w':
+        heldUp = 1;
+        break;
+      case 'ArrowDown':
+      case 's':
+        heldDown = 1;
+        break;
+    }
+  })
+  document.addEventListener('keyup', function(e) {
+    switch(e.key) {
+      case 'ArrowRight':
+      case 'd':
+        heldRight = 0;
+        break;
+      case 'ArrowLeft':
+      case 'a':
+        heldLeft = 0;
+        break;
+      case 'ArrowUp':
+      case 'w':
+        heldUp = 0;
+        break;
+      case 'ArrowDown':
+      case 's':
+        heldDown = 0;
+        break;
+    }
+  })
 animate();
 </script>
 <style>
-  canvas {width: 640px!important; height: 480px!important;  image-rendering: pixelated;
+  canvas {image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;}
 </style>
+<span class='debug'></span>
