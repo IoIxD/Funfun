@@ -1,12 +1,63 @@
 <script type="module">
+  // imports and variables
   import * as THREE from 'https://cdn.skypack.dev/three';
-  import * as THREE_OBJLOADER from 'https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js';
+  import { OrbitControls }from 'https://cdn.skypack.dev/three/examples/jsm/controls/OrbitControls.js';
+  import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js';
   const scene = new THREE.Scene();
-  const loader = new THREE_OBJLOADER.OBJLoader();
-  loader.load(
-  	'data/models/ball/ball.obj',
-  	function( object ) {
-  		scene.add(object)
-  	}
+  const camera = new THREE.PerspectiveCamera( 45, 640 / 480, 0.1, 1000 );
+  const renderer = new THREE.WebGLRenderer();
+  let ball = 0;
+  const gltf_loader = new GLTFLoader();
+
+  // ambient light
+  var ambientLight = new THREE.HemisphereLight( 0xffffbb, 0xffffbb, 10.0 );
+  scene.add( ambientLight );
+
+    const light = new THREE.DirectionalLight(0xFFFFFF, 5);
+    light.position.set(-1, 2, 4);
+    scene.add(light);
+
+  scene.add( camera );
+  scene.add(new THREE.AxesHelper(5));
+
+
+  // Load the ball model
+  gltf_loader.load('data/models/ball/ball.glb', (balltmp) => {
+      ball = balltmp;
+      console.log(ball);
+      scene.add(ball.scene);
+      camera.position.z = 10;
+    },
+  // called when loading is in progresses
+  function ( xhr ) {
+
+    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+  },
+  // called when loading has errors
+  function ( error ) {
+
+    console.log( 'An error happened: '+error);
+
+  }
   );
+  
+  // Initialize the renderer
+  renderer.setSize(320,240);
+  document.body.appendChild(renderer.domElement);
+  var controls = new OrbitControls( camera, renderer.domElement );
+  // Draw Function
+  function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+    ball.scene.rotation.x += .01;
+    ball.scene.rotation.y += .01;
+    ball.scene.rotation.z += .01;
+  }
+animate();
 </script>
+<style>
+  canvas {width: 640px!important; height: 480px!important;  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;}
+</style>
