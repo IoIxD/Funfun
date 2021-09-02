@@ -7,8 +7,11 @@ export var ambientLight = new THREE.HemisphereLight( 0xffffbb, 0xffffbb, 10.0 );
 // Add a point light to the camera
 export const light = new THREE.PointLight(0xFFFFFF, 3);
 
+export const axis = new THREE.AxesHelper(999999);
+
 export function ldoInit() {
     m.camera.add(light);
     m.scene.add( ambientLight );
+    m.scene.add(axis);
 
 }

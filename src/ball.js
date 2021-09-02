@@ -11,6 +11,7 @@ export let speedX = 0; export let speedZ = 0;
 // Raycaster
 export const raycaster = new THREE.Raycaster(ball.scene); 
 
+
 export function ballInit() {
 	m.gltf_loader.load('data/models/ball/ball.glb', (balltmp) => {
 	    m.camera.position.x = -20; m.camera.rotation.x = -2.45;
@@ -40,8 +41,9 @@ export function ballUpdate() {
     // and we want to make sure it doesn't completely error out due
     // to the ball not being present.
     label: try {
-    	ball.scene.position.x -= speedX; ball.scene.rotation.x += speedZ; m.camera.position.x -= speedX;
-    	ball.scene.position.z += speedZ; ball.scene.rotation.z += speedX; m.camera.position.z += speedZ;
+    	const quaternion = new THREE.Quaternion();
+    	ball.scene.position.x -= speedX; m.camera.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), speedZ);
+    	ball.scene.position.z += speedZ; m.camera.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), speedX);
     	break label;
     } catch {}
     // Collision
