@@ -7,8 +7,8 @@
   scene.add(camera);
   export const renderer = new THREE.WebGLRenderer();
   export const gltf_loader = new GLTFLoader();
-  export let objects = [];
-  export var controls = new OrbitControls( camera, renderer.domElement );
+  export var objects = [];
+  //export var controls = new OrbitControls( camera, renderer.domElement );
 
   // Initialize the renderer
   renderer.setSize(640,480);
