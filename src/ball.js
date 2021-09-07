@@ -1,8 +1,6 @@
 import * as THREE from 'https://cdn.skypack.dev/three@v0.132.2';
 import * as m from './main.js';
 import * as c from './controls.js';
-import { bgMove } from './background.js';
-
 import {rotateAboutPoint} from './globalFunctions.js';
 
 // Load the ball model
@@ -16,10 +14,9 @@ export const raycaster = new THREE.Raycaster(ball.scene);
 
 export function ballInit() {
 	m.gltf_loader.load('data/models/ball/ball.glb', (balltmp) => {
-	    m.camera.position.x = 1472; m.camera.rotation.x = -2.45; // -20
+	    m.camera.position.x = -20; m.camera.rotation.x = -2.45;
 	    m.camera.position.y = 20; m.camera.rotation.y = -0.5;
-	    m.camera.position.z = -520; m.camera.rotation.z = -2.73; // -25
-	    balltmp.scene.position.x = 1492; balltmp.scene.position.z = -495;
+	    m.camera.position.z = -25; m.camera.rotation.z = -2.73;
 	    m.scene.add(balltmp.scene);
 	    ball = balltmp;
 	    ballReady = true;
@@ -36,7 +33,7 @@ export function ballInit() {
 }
 export function ballUpdate() {
 	// Constantly increase the speed based on whether or not the player is holding buttons.
-	  speedX -= ((c.heldRight - c.heldLeft) / 350); speedZ -= ((c.heldDown - c.heldUp) / 350);
+    speedX += ((c.heldRight - c.heldLeft) / 350); speedZ -= ((c.heldDown - c.heldUp) / 350);
     // If the speed is above 0, decrease it, but if it's below it, increase it.
     if(speedX >= 0.000000000001) {speedX -= 0.001;} if(speedX < -0.000000000001) {speedX += (0.001);}
     if(speedZ >= 0.000000000001) {speedZ -= 0.001;} if(speedZ < -0.000000000001) {speedZ += (0.001);}
@@ -45,9 +42,8 @@ export function ballUpdate() {
     // to the ball not being present.
     label: try {
     	const quaternion = new THREE.Quaternion();
-    	ball.scene.position.x += speedX; m.camera.position.x += speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), (speedZ - (speedX / 2)));
-    	ball.scene.position.z += speedZ; m.camera.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,-1), (speedX + (speedZ / 2)));
-    	bgMove(ball.scene.position.x*8, ball.scene.position.z*8);
+    	ball.scene.position.x -= speedX; m.camera.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), speedZ);
+    	ball.scene.position.z += speedZ; m.camera.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), speedX);
     	break label;
     } catch {}
     // Collision
