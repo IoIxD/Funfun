@@ -14,9 +14,9 @@ export const raycaster = new THREE.Raycaster(ball.scene);
 
 export function ballInit() {
 	m.gltf_loader.load('data/models/ball/ball.glb', (balltmp) => {
-	    m.camera.position.x = -20; m.camera.rotation.x = -2.45;
-	    m.camera.position.y = 20; m.camera.rotation.y = -0.5;
-	    m.camera.position.z = -25; m.camera.rotation.z = -2.73;
+	    m.camera.position.x = 0; m.camera.rotation.x = THREE.Math.degToRad(180);
+	    m.camera.position.y = 5; m.camera.rotation.y = THREE.Math.degToRad(0);
+	    m.camera.position.z = -30; m.camera.rotation.z = THREE.Math.degToRad(180);
 	    m.scene.add(balltmp.scene);
 	    ball = balltmp;
 	    ballReady = true;
@@ -42,8 +42,11 @@ export function ballUpdate() {
     // to the ball not being present.
     label: try {
     	const quaternion = new THREE.Quaternion();
-    	ball.scene.position.x -= speedX; m.camera.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), speedZ);
-    	ball.scene.position.z += speedZ; m.camera.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), speedX);
+    	ball.scene.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), speedZ);
+    	ball.scene.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), speedX);
+    	if(ball.scene.position.x >= 25 || ball.scene.position.x <= -25) {ball.scene.position.x *= -1;}
+    	if(ball.scene.position.z >= 25 || ball.scene.position.z <= -25) {ball.scene.position.z *= -1;}
+    	document.querySelector('.debug').innerHTML = ball.scene.position.x;
     	break label;
     } catch {}
     // Collision
