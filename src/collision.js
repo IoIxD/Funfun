@@ -1,4 +1,3 @@
-import * as THREE from 'https://cdn.skypack.dev/three@v0.132.2';
 import * as m from './main.js';
 
 export function CollisionCheck(obj) {

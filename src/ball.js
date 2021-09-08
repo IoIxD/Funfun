@@ -1,4 +1,3 @@
-import * as THREE from 'https://cdn.skypack.dev/three@v0.132.2';
 import * as m from './main.js';
 import * as c from './controls.js';
 import * as cs from './collision.js';
@@ -11,7 +10,7 @@ export let ball = 0; export let ballReady = false;
 export let speedX = 0; export let speedY = 0; export let speedZ = 0; export let speed = 0; // Speed
 export let storedSpeedX = 0; export let storedSpeedY = 0; export let storedSpeedZ = 0; export let storedSpeed = 0;  // Stored Speed
 export let gravity = 0; export let jumpState = 0; export let heldSpaceTicks = 0; // Jumping
-export let heldShiftTicks = 0; export let moveEnable = 1; // Charging
+export let heldShiftTicks = 1; export let moveEnable = 1; // Charging
 
 // Raycaster
 export const raycaster = new THREE.Raycaster(ball.scene); 
@@ -39,18 +38,19 @@ export function ballInit() {
 }
 export function ballUpdate() {
 	// Constantly increase the speed based on whether or not the player is holding the arrow keys (but not shift).
-    if(moveEnable) {storedSpeedX += ((c.heldShift_) * (c.heldRight - c.heldLeft) / 350); storedSpeedZ -= ((c.heldShift_) * (c.heldDown - c.heldUp) / 350)};
+    if(moveEnable) {storedSpeedX += ((c.heldShift_) * (c.heldRight - c.heldLeft) / 340); storedSpeedZ -= ((c.heldShift_) * (c.heldDown - c.heldUp) / 340);}
     // If the speed is above 0, decrease it, but if it's below it, increase it.
-    if(storedSpeedX >= 0.000000000001) {storedSpeedX -= 0.001;} if(storedSpeedX < -0.000000000001) {storedSpeedX += 0.001;}
-    if(storedSpeedZ >= 0.000000000001) {storedSpeedZ -= 0.001;} if(storedSpeedZ < -0.000000000001) {storedSpeedZ += 0.001;}
+    let slowdown = 0.001 + (Math.abs(moveEnable-1)/500);;
+    if(storedSpeedX >= 0.000000000001) {storedSpeedX -= slowdown;} if(storedSpeedX < -0.000000000001) {storedSpeedX += slowdown;}
+    if(storedSpeedZ >= 0.000000000001) {storedSpeedZ -= slowdown} if(storedSpeedZ < -0.000000000001) {storedSpeedZ += slowdown;}
     // We want a general speed values
     speed = Math.abs(speedX+speedZ);
     storedSpeed = Math.abs(storedSpeedX+storedSpeedZ);
     // If the player has pressed space and they're landed, start to increase their vertical velocity.
     if(c.heldSpace == 1 && jumpState == 0) {speedY += ((c.heldSpace) / 8);}
-    // The player can hold space/shift for a maximum of 25 ticks to get higher jump speeds.
+    // The player can hold space for a maximum of 25 ticks to get higher jump speeds. 
     if (heldSpaceTicks <= 25) {heldSpaceTicks += c.heldSpace} else {jumpState = 2;}
-    if (heldShiftTicks <= 25 && !c.heldShift) {heldShiftTicks += 0.5 / (speedX)}
+    heldShiftTicks += (storedSpeedX)/16*Math.abs(c.heldShift-1); // The limit for shift ticks is the speed limit.
     // Increase their gravity value by that final velocity, unless it's above 0.75
     if(gravity <= 0.75 && jumpState <= 1) {gravity += speedY}
     // If it is, or if they've release spaced, then they should be put into landing mode.
@@ -61,6 +61,8 @@ export function ballUpdate() {
     // Max speed achievable by charging; if this is reached, display key inputs until the player slows down.
     if(storedSpeedX >= 3) {storedSpeedX = 3; moveEnable = 0;}; if(storedSpeedX <= -3) {storedSpeedX = -3; moveEnable = 0;};
     if(storedSpeedZ >= 3) {storedSpeedZ = 3; moveEnable = 0;}; if(storedSpeedZ <= -3) {storedSpeedZ = -3; moveEnable = 0;};
+    // The player will regain control when they've slowed down.
+    if(storedSpeed <= 0.01 && storedSpeed >= -0.01) {moveEnable = 1;}
     // This function runs while the ball is still being initialized,
     // and we want to make sure it doesn't completely error out due
     // to the ball not being present.
@@ -78,8 +80,8 @@ export function ballUpdate() {
     	} else if (ball.scene.position.y < 0 && speedY <= 0.12 && jumpState >= 1) {
     		gravity = 0; speedY = 0; ball.scene.position.y = 0; jumpState = 0; heldSpaceTicks = 0;}
         document.querySelector('.bar .fill').style.width = 21*storedSpeed+"px";
-        if(!moveEnable) {document.querySelector('.bar .fill').style.filter = "saturate("+100/storedSpeed+"%);";}
-    	document.querySelector('.debug').innerHTML = "speed "+(Math.round(speed*100)/100)+", stored speed "+(Math.round(storedSpeed*100)/100);
+        if(!moveEnable) {document.querySelector('.bar .fill').style.filter = "saturate("+(100-(storedSpeed*33))+"%)"}
+        document.querySelector('.debug').innerHTML = heldShiftTicks/350;
     	cs.CollisionCheck(ball);
     	break label;
     } catch(ex) {console.log(ex)}
