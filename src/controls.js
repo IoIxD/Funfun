@@ -1,5 +1,5 @@
 export let heldLeft = 0; export let heldRight = 0; export let heldUp = 0; export let heldDown = 0; 
-export let heldSpace = 0; export let heldSpaceTicks = 0; export let heldShift = 0;
+export let heldSpace = 0; export let heldSpaceTicks = 0; export let heldShift = 1; export let heldShift_ = 1;
 document.addEventListener('keydown', function(e) {
   switch(e.key) {
     case 'ArrowRight':
@@ -22,7 +22,8 @@ document.addEventListener('keydown', function(e) {
       heldSpace = 1;
       break;
     case 'Shift':
-      heldShift = 1;
+      heldShift = 0;
+      heldShift_ = 3;
       break;
   }
 })
@@ -48,7 +49,8 @@ document.addEventListener('keyup', function(e) {
       heldSpace = 0;
       break;
     case 'Shift':
-      heldShift = 0;
+      heldShift = 1;
+      heldShift_ = 1;
       break;
   }
 })

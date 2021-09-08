@@ -3,8 +3,24 @@
   init();
 </script>
 <style>
-  canvas {image-rendering: pixelated;
+  .wrapper{position: relative; display: block; width: 640px; height: 480px;}
+  canvas {z-index: 1!important;}
+  .wrapper .debug {top: 0px; right: 0px; color: white; text-shadow: 1px 1px gray;}
+  .speedometer {margin: 6px; width: 100%; display: block;}
+  .speedometer * {background-image: url('data/sprites/speedometer.png'); height: 32px; max-height: 32px;}
+  .speedometer .text {width: 96px; max-width: 96px; display: inline-block; font-size: 0px;}
+  .speedometer .bar, .speedometer .bar .fill {left: 100px; max-width: 64px; display: inline-block; background-size: 400%;}
+  .speedometer .bar {background-position: -102px 0; width: 64px;}
+  .speedometer .bar .fill {top: 0; left: 0;background-position: -178px 0; background-size: 256px 32px!important;}
+  .wrapper *:not(canvas) {position: absolute; display: block; z-index: 99999999!important;
+  image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;}
+  image-rendering: crisp-edges;};
 </style>
-<span class='debug'></span>
+<span class='wrapper'>
+  <span class='speedometer'>
+    <span class='text'>SPEED</span>
+    <span class='bar'><span class='fill' style="width: 0px; filter: saturate(100%);"></span></span>
+  </span>
+  <span class='debug'></span>
+</span>

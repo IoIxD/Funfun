@@ -12,5 +12,5 @@
 
   // Initialize the renderer
   renderer.setSize(640,480);
-  document.body.appendChild(renderer.domElement);
+  document.querySelector(".wrapper").appendChild(renderer.domElement);
   
