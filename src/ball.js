@@ -8,7 +8,8 @@ import {rotateAboutPoint} from './globalFunctions.js';
 export let ball = 0; export let ballReady = false;
 
 // Speed
-export let speedX = 0; export let speedY = 0; export let speedZ = 0; 
+export let speedX = 0; export let speedY = 0; export let speedZ = 0;
+export let storedSpeedX = 0; export let storedSpeedY = 0; export let storedSpeedZ = 0; 
 export let gravity = 0; export let jumpState = 0; export let heldSpaceTicks = 0;
 // Raycaster
 export const raycaster = new THREE.Raycaster(ball.scene); 
@@ -35,30 +36,43 @@ export function ballInit() {
 	console.log(ball);
 }
 export function ballUpdate() {
-	//NOTE:
-	//jumpState: 0 = can jump, 1 = is jumping, 2 = is landing
-
-	// Constantly increase the speed based on whether or not the player is holding buttons.
-    speedX += ((c.heldRight - c.heldLeft) / 350); speedZ -= ((c.heldDown - c.heldUp) / 350);
-    if (heldSpaceTicks <= 10) {heldSpaceTicks += c.heldSpace} else {jumpState = 2;}
-    if(c.heldSpace == 1 && jumpState == 0) {speedY += ((c.heldSpace) / 8);}
+	// Constantly increase the speed based on whether or not the player is holding the arrow keys (but not shift).
+    storedSpeedX += ((c.heldShift ** 2) + (c.heldRight - c.heldLeft) / 350); storedSpeedZ -= ((c.heldShift ** 2) + (c.heldDown - c.heldUp) / 350);
     // If the speed is above 0, decrease it, but if it's below it, increase it.
-    if(speedX >= 0.000000000001) {speedX -= 0.001;} if(speedX < -0.000000000001) {speedX += (0.001);}
-    if(speedZ >= 0.000000000001) {speedZ -= 0.001;} if(speedZ < -0.000000000001) {speedZ += (0.001);}
+    if(storedSpeedX >= 0.000000000001) {storedSpeedX -= 0.001;} if(storedSpeedX < -0.000000000001) {storedSpeedX += (0.001);}
+    if(storedSpeedZ >= 0.000000000001) {storedSpeedZ -= 0.001;} if(storedSpeedZ < -0.000000000001) {storedSpeedZ += (0.001);}
+    // If the player has pressed space and they're landed, start to increase their vertical velocity.
+    if(c.heldSpace == 1 && jumpState == 0) {speedY += ((c.heldSpace) / 8);}
+    // The player can hold space for a maximum of 25 ticks to get higher jump speeds.
+    if (heldSpaceTicks <= 25) {heldSpaceTicks += c.heldSpace} else {jumpState = 2;}
+    // Increase their gravity value by that final velocity, unless it's above 0.75
     if(gravity <= 0.75 && jumpState <= 1) {gravity += speedY}
-    if(gravity >= 0.75) {jumpState = 2;} if(jumpState == 2) {gravity -= 0.1;}
+    // If it is, or if they've release spaced, then they should be put into landing mode.
+    if(gravity >= 0.75 || (c.heldSpace == 0 && jumpState == 1)) {jumpState = 2;}
+    // If they're in landing mode, gradually decrease their falling speed (slower depending on how long they held space)
+    if(jumpState == 2) {gravity -= 0.5/heldSpaceTicks;}
     // This function runs while the ball is still being initialized,
     // and we want to make sure it doesn't completely error out due
     // to the ball not being present.
     label: try {
-    	const quaternion = new THREE.Quaternion();
-    	ball.scene.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), speedZ);
-    	ball.scene.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), speedX);
+    	speedX = (storedSpeedX * c.heldShift); speedZ = (storedSpeedZ * c.heldShift);
+    	ball.scene.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), storedSpeedZ);
+    	ball.scene.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), storedSpeedX);
     	if(ball.scene.position.x >= 25 || ball.scene.position.x <= -25) {ball.scene.position.x *= -1;}
     	if(ball.scene.position.z >= 25 || ball.scene.position.z <= -25) {ball.scene.position.z *= -1;}
     	ball.scene.position.y += gravity;
-    	document.querySelector('.debug').innerHTML = "gravity "+gravity+", speedY "+speedY+", jumpState "+jumpState+", heldSpace "+c.heldSpace;
-    	cs.CollisionCheck(ball.scene);
+    	// Until there's a proper collision system, check if the player reachs y 0 and consider them as on the ground.
+    	if(ball.scene.position.y < 0 && speedY >= 0.12 && jumpState >= 1) {
+    		gravity = (speedY/1.5);
+    		speedY /= 1.5;
+    	} else if (ball.scene.position.y < 0 && speedY <= 0.12 && jumpState >= 1) {
+    		gravity = 0; speedY = 0; ball.scene.position.y = 0; jumpState = 0; heldSpaceTicks = 0;}
+    	document.querySelector('.debug').innerHTML = "y "+Math.round(ball.scene.position.y*100)/100+
+    	"<br> gravity "+Math.round(gravity*100)/100+
+    	"<br> speedY "+Math.round(speedY*100)/100+
+    	"<br> jumpState "+jumpState+
+    	"<br> heldSpace "+c.heldSpace;
+    	cs.CollisionCheck(ball);
     	break label;
-    } catch {}
+    } catch(ex) {console.log(ex)}
 }
