@@ -1,10 +1,9 @@
   import { OrbitControls }from '../include/threejs/examples/jsm/controls/OrbitControls.js';
   import { GLTFLoader } from '../include/threejs/examples/jsm/loaders/GLTFLoader.js';
 
-  Physijs.scripts.worker = '../include/physijs/physijs_worker.js';
-  Physijs.scripts.ammo = '../include/ammo.js';
-
   export const scene = new THREE.Scene();
+  export const world = new CANNON.World();
+  
   export const camera = new THREE.PerspectiveCamera( 45, 640 / 480, 0.1, 1000 );
   scene.add(camera);
   export const renderer = new THREE.WebGLRenderer();

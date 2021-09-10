@@ -1,5 +1,5 @@
 <script src="./include/threejs/build/three.js"></script>
-<script src="./include/physijs/physi.js"></script>
+<script src="./include/cannon.js"></script>
 <script type="module">
   import { init } from './src/init.js';
   init();
@@ -14,7 +14,8 @@
   .speedometer .bar, .speedometer .bar .fill {left: 100px; max-width: 64px; display: inline-block; background-size: 400%;}
   .speedometer .bar {background-position: -102px 0; width: 64px;}
   .speedometer .bar .fill {top: 0; left: 0;background-position: -178px 0; background-size: 256px 32px!important;}
-  .wrapper *:not(canvas) {position: absolute; display: block; z-index: 99999999!important;
+  .wrapper *:not(canvas) {position: absolute; display: block; z-index: 99999999!important;}
+  * {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;};

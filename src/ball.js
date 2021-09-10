@@ -1,10 +1,11 @@
 import * as m from './main.js';
 import * as c from './controls.js';
 import * as cs from './collision.js';
+import * as de from './loadDefaultObjects.js';
 import {rotateAboutPoint} from './globalFunctions.js';
 
-// Load the ball model
-export let ball = 0; export let ballReady = false;
+// Ball model constants
+export let ball = 0; export let ballc = 0; let result = 0;
 
 // Movement
 export let speedX = 0; export let speedY = 0; export let speedZ = 0; export let speed = 0; // Speed
@@ -17,13 +18,20 @@ export const raycaster = new THREE.Raycaster(ball.scene);
 
 
 export function ballInit() {
+    // Load the actual ball model
 	m.gltf_loader.load('data/models/ball/ball.glb', (balltmp) => {
-	    m.camera.position.x = 0; m.camera.rotation.x = THREE.Math.degToRad(180);
-	    m.camera.position.y = 5; m.camera.rotation.y = THREE.Math.degToRad(0);
-	    m.camera.position.z = -30; m.camera.rotation.z = THREE.Math.degToRad(180);
+        // Add the visible ball and assign it to our global variable
 	    m.scene.add(balltmp.scene);
-	    ball = balltmp;
-	    ballReady = true;
+        ball = balltmp;
+        ball.castShadow = true;
+        // Add the collision ball
+        var ballshape = new CANNON.Sphere(1);
+        let mass = 2;
+        ballc = new CANNON.Body({ mass, ballshape });
+        ballc.collisionResponse = 1;
+        ballc.position.y = 5;
+        ballc.addEventListener("collide", function(e){ console.log("sphere collided"); } );
+        m.world.addBody(ballc);
 	    console.log(m.objects);
 	  },
 	    // called when loading is in progresses
@@ -34,7 +42,6 @@ export function ballInit() {
 	      console.log(error);
 	    }
 	);
-	console.log(ball);
 }
 export function ballUpdate() {
 	// Constantly increase the speed based on whether or not the player is holding the arrow keys (but not shift).
@@ -68,21 +75,19 @@ export function ballUpdate() {
     // to the ball not being present.
     label: try {
     	speedX = (storedSpeedX * c.heldShift); speedZ = (storedSpeedZ * c.heldShift);
-    	ball.scene.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), storedSpeedZ);
-    	ball.scene.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), storedSpeedX);
-    	if(ball.scene.position.x >= 25 || ball.scene.position.x <= -25) {ball.scene.position.x *= -1;}
-    	if(ball.scene.position.z >= 25 || ball.scene.position.z <= -25) {ball.scene.position.z *= -1;}
-    	ball.scene.position.y += gravity;
-    	// Until there's a proper collision system, check if the player reachs y 0 and consider them as on the ground.
-    	if(ball.scene.position.y < 0 && speedY >= 0.12 && jumpState >= 1) {
-    		gravity = (speedY/1.5);
-    		speedY /= 1.5;
-    	} else if (ball.scene.position.y < 0 && speedY <= 0.12 && jumpState >= 1) {
-    		gravity = 0; speedY = 0; ball.scene.position.y = 0; jumpState = 0; heldSpaceTicks = 0;}
+    	ballc.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), storedSpeedZ);
+    	ballc.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), storedSpeedX);
+    	if(ballc.position.x >= 25 || ballc.position.x <= -25) {ballc.position.x *= -1;}
+    	if(ballc.position.z >= 25 || ballc.position.z <= -25) {ballc.position.z *= -1;}
+    	ball.scene.position.copy(ballc.position);
+        //collision...?
+
+        var isHit = m.world.raycastClosest(ballc, de.planec, {}, result);
+        console.log(result);
+    	//gravity = 0; speedY = 0; ballc.position.y = 0; jumpState = 0; heldSpaceTicks = 0;}
         document.querySelector('.bar .fill').style.width = 21*storedSpeed+"px";
         if(!moveEnable) {document.querySelector('.bar .fill').style.filter = "saturate("+(100-(storedSpeed*33))+"%)"}
         document.querySelector('.debug').innerHTML = heldShiftTicks/350;
-    	cs.CollisionCheck(ball);
     	break label;
     } catch(ex) {console.log(ex)}
 }
