@@ -1,3 +1,5 @@
+import * as THREE from '../include/three.module.js';
+import * as CANNON from '../include/cannon-es.js';
 import * as m from './main.js';
 
 // ambient light
@@ -10,33 +12,25 @@ export const light = new THREE.PointLight(0xFFFFFF, 3);
 export const axis = new THREE.AxesHelper(999999);
 
 // test plane 
-export const geometry = new THREE.PlaneGeometry( 50, 50);
+export const geometry = new THREE.PlaneGeometry( 1, 1);
 export const material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
 export const plane = new THREE.Mesh( geometry, material );
-export const planecshape = new CANNON.Plane(50);
-export const planecmass = 30; export let planec = 0;
+export const planecshape = new CANNON.Plane(5);
+export const planecmass = 0; export let planec = 0;
 
 
 export function ldoInit() {
-    m.world.gravity.set(0, -10, 0);
-    m.world.broadphase = new CANNON.NaiveBroadphase();
-    m.world.solver.iterations = 5;
-    m.world.defaultContactMaterial.contactEquationStiffness = 1e6;
-    m.world.defaultContactMaterial.contactEquationRelaxation = 10;
-    m.scene.add(m.camera);
-    m.camera.position.x = 0; m.camera.rotation.x = THREE.Math.degToRad(180);
-    m.camera.position.y = 5; m.camera.rotation.y = THREE.Math.degToRad(0);
-    m.camera.position.z = -30; m.camera.rotation.z = THREE.Math.degToRad(180);
     m.camera.add(light);
     m.scene.add( ambientLight );
     m.scene.add(axis);
     m.scene.add(plane);
-    planec = new CANNON.Body({ planecmass, planecshape });
+    planec = new CANNON.Body({ type: 0, planecshape });
     planec.collisionResponse = 1;
+    planec.linearDamping = 0;
+    planec.position.y = 2;
     plane.position.copy(planec.position);
     m.world.addBody(planec);
-    //m.objects.push(plane);
-    console.log(m.objects);
+    console.log(planec);
+    console.log(plane.scale);
     plane.rotation.x = THREE.Math.degToRad(90);
-    plane.position.y = -1;
 }

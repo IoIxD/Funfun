@@ -1,8 +1,12 @@
-  import { OrbitControls }from '../include/threejs/examples/jsm/controls/OrbitControls.js';
-  import { GLTFLoader } from '../include/threejs/examples/jsm/loaders/GLTFLoader.js';
+  import * as THREE from '../include/three.module.js';
+  import * as CANNON from '../include/cannon-es.js';
+  import cannonDebugger from '../include/cannon-es-debugger.js';
+
+  import { GLTFLoader } from '../include/GLTFLoader.js';
 
   export const scene = new THREE.Scene();
-  export const world = new CANNON.World();
+  export const world = new CANNON.World({gravity: new CANNON.Vec3(0, -9.82, 0)});
+  cannonDebugger(scene, world.bodies, {color: 0xff0000, scale: 2});
   
   export const camera = new THREE.PerspectiveCamera( 45, 640 / 480, 0.1, 1000 );
   scene.add(camera);
@@ -14,4 +18,3 @@
   // Initialize the renderer
   renderer.setSize(640,480);
   document.querySelector(".wrapper").appendChild(renderer.domElement);
-  

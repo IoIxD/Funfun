@@ -1,8 +1,9 @@
+import * as THREE from '../include/three.module.js';
+import * as CANNON from '../include/cannon-es.js';
+
 import * as m from './main.js';
 import * as c from './controls.js';
-import * as cs from './collision.js';
 import * as de from './loadDefaultObjects.js';
-import {rotateAboutPoint} from './globalFunctions.js';
 
 // Ball model constants
 export let ball = 0; export let ballc = 0; let result = 0;
@@ -26,13 +27,14 @@ export function ballInit() {
         ball.castShadow = true;
         // Add the collision ball
         var ballshape = new CANNON.Sphere(1);
-        let mass = 2;
+        let mass = 5;
         ballc = new CANNON.Body({ mass, ballshape });
+        ballc.velocity.set(0,0,0);
         ballc.collisionResponse = 1;
         ballc.position.y = 5;
+        ballc.linearDamping = 0;
         ballc.addEventListener("collide", function(e){ console.log("sphere collided"); } );
         m.world.addBody(ballc);
-	    console.log(m.objects);
 	  },
 	    // called when loading is in progresses
 	    function ( xhr ) {
@@ -80,10 +82,7 @@ export function ballUpdate() {
     	if(ballc.position.x >= 25 || ballc.position.x <= -25) {ballc.position.x *= -1;}
     	if(ballc.position.z >= 25 || ballc.position.z <= -25) {ballc.position.z *= -1;}
     	ball.scene.position.copy(ballc.position);
-        //collision...?
-
-        var isHit = m.world.raycastClosest(ballc, de.planec, {}, result);
-        console.log(result);
+        ball.scene.quaternion.copy(ballc.quaternion);
     	//gravity = 0; speedY = 0; ballc.position.y = 0; jumpState = 0; heldSpaceTicks = 0;}
         document.querySelector('.bar .fill').style.width = 21*storedSpeed+"px";
         if(!moveEnable) {document.querySelector('.bar .fill').style.filter = "saturate("+(100-(storedSpeed*33))+"%)"}

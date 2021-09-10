@@ -438,7 +438,7 @@ function ArrayCollisionMatrix() {
      * @property matrix
      * @type {Array}
      */
-	this.matrix = [];
+  this.matrix = [];
 }
 
 /**
@@ -449,14 +449,14 @@ function ArrayCollisionMatrix() {
  * @return {Number}
  */
 ArrayCollisionMatrix.prototype.get = function(i, j) {
-	i = i.index;
-	j = j.index;
+  i = i.index;
+  j = j.index;
     if (j > i) {
         var temp = j;
         j = i;
         i = temp;
     }
-	return this.matrix[(i*(i + 1)>>1) + j-1];
+  return this.matrix[(i*(i + 1)>>1) + j-1];
 };
 
 /**
@@ -467,14 +467,14 @@ ArrayCollisionMatrix.prototype.get = function(i, j) {
  * @param {Number} value
  */
 ArrayCollisionMatrix.prototype.set = function(i, j, value) {
-	i = i.index;
-	j = j.index;
+  i = i.index;
+  j = j.index;
     if (j > i) {
         var temp = j;
         j = i;
         i = temp;
     }
-	this.matrix[(i*(i + 1)>>1) + j-1] = value ? 1 : 0;
+  this.matrix[(i*(i + 1)>>1) + j-1] = value ? 1 : 0;
 };
 
 /**
@@ -482,9 +482,9 @@ ArrayCollisionMatrix.prototype.set = function(i, j, value) {
  * @method reset
  */
 ArrayCollisionMatrix.prototype.reset = function() {
-	for (var i=0, l=this.matrix.length; i!==l; i++) {
-		this.matrix[i]=0;
-	}
+  for (var i=0, l=this.matrix.length; i!==l; i++) {
+    this.matrix[i]=0;
+  }
 };
 
 /**
@@ -493,7 +493,7 @@ ArrayCollisionMatrix.prototype.reset = function() {
  * @param {Number} n
  */
 ArrayCollisionMatrix.prototype.setNumObjects = function(n) {
-	this.matrix.length = n*(n-1)>>1;
+  this.matrix.length = n*(n-1)>>1;
 };
 
 },{}],5:[function(_dereq_,module,exports){
@@ -731,18 +731,18 @@ function GridBroadphase(aabbMin,aabbMax,nx,ny,nz){
     this.nz = nz || 10;
     this.aabbMin = aabbMin || new Vec3(100,100,100);
     this.aabbMax = aabbMax || new Vec3(-100,-100,-100);
-	var nbins = this.nx * this.ny * this.nz;
-	if (nbins <= 0) {
-		throw "GridBroadphase: Each dimension's n must be >0";
-	}
+  var nbins = this.nx * this.ny * this.nz;
+  if (nbins <= 0) {
+    throw "GridBroadphase: Each dimension's n must be >0";
+  }
     this.bins = [];
-	this.binLengths = []; //Rather than continually resizing arrays (thrashing the memory), just record length and allow them to grow
-	this.bins.length = nbins;
-	this.binLengths.length = nbins;
-	for (var i=0;i<nbins;i++) {
-		this.bins[i]=[];
-		this.binLengths[i]=0;
-	}
+  this.binLengths = []; //Rather than continually resizing arrays (thrashing the memory), just record length and allow them to grow
+  this.bins.length = nbins;
+  this.binLengths.length = nbins;
+  for (var i=0;i<nbins;i++) {
+    this.bins[i]=[];
+    this.binLengths[i]=0;
+  }
 }
 GridBroadphase.prototype = new Broadphase();
 GridBroadphase.prototype.constructor = GridBroadphase;
@@ -766,9 +766,9 @@ GridBroadphase.prototype.collisionPairs = function(world,pairs1,pairs2){
         ny = this.ny,
         nz = this.nz;
 
-	var xstep = ny*nz;
-	var ystep = nz;
-	var zstep = 1;
+  var xstep = ny*nz;
+  var ystep = nz;
+  var zstep = 1;
 
     var xmax = max.x,
         ymax = max.y,
@@ -785,7 +785,7 @@ GridBroadphase.prototype.collisionPairs = function(world,pairs1,pairs2){
         binsizeY = (ymax - ymin) / ny,
         binsizeZ = (zmax - zmin) / nz;
 
-	var binRadius = Math.sqrt(binsizeX*binsizeX + binsizeY*binsizeY + binsizeZ*binsizeZ) * 0.5;
+  var binRadius = Math.sqrt(binsizeX*binsizeX + binsizeY*binsizeY + binsizeZ*binsizeZ) * 0.5;
 
     var types = Shape.types;
     var SPHERE =            types.SPHERE,
@@ -795,7 +795,7 @@ GridBroadphase.prototype.collisionPairs = function(world,pairs1,pairs2){
         CONVEXPOLYHEDRON =  types.CONVEXPOLYHEDRON;
 
     var bins=this.bins,
-		binLengths=this.binLengths,
+    binLengths=this.binLengths,
         Nbins=this.bins.length;
 
     // Reset bins
@@ -804,40 +804,40 @@ GridBroadphase.prototype.collisionPairs = function(world,pairs1,pairs2){
     }
 
     var ceil = Math.ceil;
-	var min = Math.min;
-	var max = Math.max;
+  var min = Math.min;
+  var max = Math.max;
 
-	function addBoxToBins(x0,y0,z0,x1,y1,z1,bi) {
-		var xoff0 = ((x0 - xmin) * xmult)|0,
-			yoff0 = ((y0 - ymin) * ymult)|0,
-			zoff0 = ((z0 - zmin) * zmult)|0,
-			xoff1 = ceil((x1 - xmin) * xmult),
-			yoff1 = ceil((y1 - ymin) * ymult),
-			zoff1 = ceil((z1 - zmin) * zmult);
+  function addBoxToBins(x0,y0,z0,x1,y1,z1,bi) {
+    var xoff0 = ((x0 - xmin) * xmult)|0,
+      yoff0 = ((y0 - ymin) * ymult)|0,
+      zoff0 = ((z0 - zmin) * zmult)|0,
+      xoff1 = ceil((x1 - xmin) * xmult),
+      yoff1 = ceil((y1 - ymin) * ymult),
+      zoff1 = ceil((z1 - zmin) * zmult);
 
-		if (xoff0 < 0) { xoff0 = 0; } else if (xoff0 >= nx) { xoff0 = nx - 1; }
-		if (yoff0 < 0) { yoff0 = 0; } else if (yoff0 >= ny) { yoff0 = ny - 1; }
-		if (zoff0 < 0) { zoff0 = 0; } else if (zoff0 >= nz) { zoff0 = nz - 1; }
-		if (xoff1 < 0) { xoff1 = 0; } else if (xoff1 >= nx) { xoff1 = nx - 1; }
-		if (yoff1 < 0) { yoff1 = 0; } else if (yoff1 >= ny) { yoff1 = ny - 1; }
-		if (zoff1 < 0) { zoff1 = 0; } else if (zoff1 >= nz) { zoff1 = nz - 1; }
+    if (xoff0 < 0) { xoff0 = 0; } else if (xoff0 >= nx) { xoff0 = nx - 1; }
+    if (yoff0 < 0) { yoff0 = 0; } else if (yoff0 >= ny) { yoff0 = ny - 1; }
+    if (zoff0 < 0) { zoff0 = 0; } else if (zoff0 >= nz) { zoff0 = nz - 1; }
+    if (xoff1 < 0) { xoff1 = 0; } else if (xoff1 >= nx) { xoff1 = nx - 1; }
+    if (yoff1 < 0) { yoff1 = 0; } else if (yoff1 >= ny) { yoff1 = ny - 1; }
+    if (zoff1 < 0) { zoff1 = 0; } else if (zoff1 >= nz) { zoff1 = nz - 1; }
 
-		xoff0 *= xstep;
-		yoff0 *= ystep;
-		zoff0 *= zstep;
-		xoff1 *= xstep;
-		yoff1 *= ystep;
-		zoff1 *= zstep;
+    xoff0 *= xstep;
+    yoff0 *= ystep;
+    zoff0 *= zstep;
+    xoff1 *= xstep;
+    yoff1 *= ystep;
+    zoff1 *= zstep;
 
-		for (var xoff = xoff0; xoff <= xoff1; xoff += xstep) {
-			for (var yoff = yoff0; yoff <= yoff1; yoff += ystep) {
-				for (var zoff = zoff0; zoff <= zoff1; zoff += zstep) {
-					var idx = xoff+yoff+zoff;
-					bins[idx][binLengths[idx]++] = bi;
-				}
-			}
-		}
-	}
+    for (var xoff = xoff0; xoff <= xoff1; xoff += xstep) {
+      for (var yoff = yoff0; yoff <= yoff1; yoff += ystep) {
+        for (var zoff = zoff0; zoff <= zoff1; zoff += zstep) {
+          var idx = xoff+yoff+zoff;
+          bins[idx][binLengths[idx]++] = bi;
+        }
+      }
+    }
+  }
 
     // Put all bodies into the bins
     for(var i=0; i!==N; i++){
@@ -853,7 +853,7 @@ GridBroadphase.prototype.collisionPairs = function(world,pairs1,pairs2){
                 z = bi.position.z;
             var r = si.radius;
 
-			addBoxToBins(x-r, y-r, z-r, x+r, y+r, z+r, bi);
+      addBoxToBins(x-r, y-r, z-r, x+r, y+r, z+r, bi);
             break;
 
         case PLANE:
@@ -862,75 +862,75 @@ GridBroadphase.prototype.collisionPairs = function(world,pairs1,pairs2){
             }
             var planeNormal = si.worldNormal;
 
-			//Relative position from origin of plane object to the first bin
-			//Incremented as we iterate through the bins
-			var xreset = xmin + binsizeX*0.5 - bi.position.x,
-				yreset = ymin + binsizeY*0.5 - bi.position.y,
-				zreset = zmin + binsizeZ*0.5 - bi.position.z;
+      //Relative position from origin of plane object to the first bin
+      //Incremented as we iterate through the bins
+      var xreset = xmin + binsizeX*0.5 - bi.position.x,
+        yreset = ymin + binsizeY*0.5 - bi.position.y,
+        zreset = zmin + binsizeZ*0.5 - bi.position.z;
 
             var d = GridBroadphase_collisionPairs_d;
-			d.set(xreset, yreset, zreset);
+      d.set(xreset, yreset, zreset);
 
-			for (var xi = 0, xoff = 0; xi !== nx; xi++, xoff += xstep, d.y = yreset, d.x += binsizeX) {
-				for (var yi = 0, yoff = 0; yi !== ny; yi++, yoff += ystep, d.z = zreset, d.y += binsizeY) {
-					for (var zi = 0, zoff = 0; zi !== nz; zi++, zoff += zstep, d.z += binsizeZ) {
-						if (d.dot(planeNormal) < binRadius) {
-							var idx = xoff + yoff + zoff;
-							bins[idx][binLengths[idx]++] = bi;
-						}
-					}
-				}
-			}
+      for (var xi = 0, xoff = 0; xi !== nx; xi++, xoff += xstep, d.y = yreset, d.x += binsizeX) {
+        for (var yi = 0, yoff = 0; yi !== ny; yi++, yoff += ystep, d.z = zreset, d.y += binsizeY) {
+          for (var zi = 0, zoff = 0; zi !== nz; zi++, zoff += zstep, d.z += binsizeZ) {
+            if (d.dot(planeNormal) < binRadius) {
+              var idx = xoff + yoff + zoff;
+              bins[idx][binLengths[idx]++] = bi;
+            }
+          }
+        }
+      }
             break;
 
         default:
-			if (bi.aabbNeedsUpdate) {
-				bi.computeAABB();
-			}
+      if (bi.aabbNeedsUpdate) {
+        bi.computeAABB();
+      }
 
-			addBoxToBins(
-				bi.aabb.lowerBound.x,
-				bi.aabb.lowerBound.y,
-				bi.aabb.lowerBound.z,
-				bi.aabb.upperBound.x,
-				bi.aabb.upperBound.y,
-				bi.aabb.upperBound.z,
-				bi);
+      addBoxToBins(
+        bi.aabb.lowerBound.x,
+        bi.aabb.lowerBound.y,
+        bi.aabb.lowerBound.z,
+        bi.aabb.upperBound.x,
+        bi.aabb.upperBound.y,
+        bi.aabb.upperBound.z,
+        bi);
             break;
         }
     }
 
     // Check each bin
     for(var i=0; i!==Nbins; i++){
-		var binLength = binLengths[i];
-		//Skip bins with no potential collisions
-		if (binLength > 1) {
-			var bin = bins[i];
+    var binLength = binLengths[i];
+    //Skip bins with no potential collisions
+    if (binLength > 1) {
+      var bin = bins[i];
 
-			// Do N^2 broadphase inside
-			for(var xi=0; xi!==binLength; xi++){
-				var bi = bin[xi];
-				for(var yi=0; yi!==xi; yi++){
-					var bj = bin[yi];
-					if(this.needBroadphaseCollision(bi,bj)){
-						this.intersectionTest(bi,bj,pairs1,pairs2);
-					}
-				}
-			}
-		}
+      // Do N^2 broadphase inside
+      for(var xi=0; xi!==binLength; xi++){
+        var bi = bin[xi];
+        for(var yi=0; yi!==xi; yi++){
+          var bj = bin[yi];
+          if(this.needBroadphaseCollision(bi,bj)){
+            this.intersectionTest(bi,bj,pairs1,pairs2);
+          }
+        }
+      }
+    }
     }
 
-//	for (var zi = 0, zoff=0; zi < nz; zi++, zoff+= zstep) {
-//		console.log("layer "+zi);
-//		for (var yi = 0, yoff=0; yi < ny; yi++, yoff += ystep) {
-//			var row = '';
-//			for (var xi = 0, xoff=0; xi < nx; xi++, xoff += xstep) {
-//				var idx = xoff + yoff + zoff;
-//				row += ' ' + binLengths[idx];
-//			}
-//			console.log(row);
-//		}
-//	}
+//  for (var zi = 0, zoff=0; zi < nz; zi++, zoff+= zstep) {
+//    console.log("layer "+zi);
+//    for (var yi = 0, yoff=0; yi < ny; yi++, yoff += ystep) {
+//      var row = '';
+//      for (var xi = 0, xoff=0; xi < nx; xi++, xoff += xstep) {
+//        var idx = xoff + yoff + zoff;
+//        row += ' ' + binLengths[idx];
+//      }
+//      console.log(row);
+//    }
+//  }
 
     this.makePairsUnique(pairs1,pairs2);
 };
@@ -1025,7 +1025,7 @@ function ObjectCollisionMatrix() {
      * @property matrix
      * @type {Object}
      */
-	this.matrix = {};
+  this.matrix = {};
 }
 
 /**
@@ -1035,14 +1035,14 @@ function ObjectCollisionMatrix() {
  * @return {Number}
  */
 ObjectCollisionMatrix.prototype.get = function(i, j) {
-	i = i.id;
-	j = j.id;
+  i = i.id;
+  j = j.id;
     if (j > i) {
         var temp = j;
         j = i;
         i = temp;
     }
-	return i+'-'+j in this.matrix;
+  return i+'-'+j in this.matrix;
 };
 
 /**
@@ -1052,19 +1052,19 @@ ObjectCollisionMatrix.prototype.get = function(i, j) {
  * @param {Number} value
  */
 ObjectCollisionMatrix.prototype.set = function(i, j, value) {
-	i = i.id;
-	j = j.id;
+  i = i.id;
+  j = j.id;
     if (j > i) {
         var temp = j;
         j = i;
         i = temp;
-	}
-	if (value) {
-		this.matrix[i+'-'+j] = true;
-	}
-	else {
-		delete this.matrix[i+'-'+j];
-	}
+  }
+  if (value) {
+    this.matrix[i+'-'+j] = true;
+  }
+  else {
+    delete this.matrix[i+'-'+j];
+  }
 };
 
 /**
@@ -1072,7 +1072,7 @@ ObjectCollisionMatrix.prototype.set = function(i, j, value) {
  * @method reset
  */
 ObjectCollisionMatrix.prototype.reset = function() {
-	this.matrix = {};
+  this.matrix = {};
 };
 
 /**
@@ -1926,64 +1926,64 @@ module.exports = RaycastResult;
  */
 function RaycastResult(){
 
-	/**
-	 * @property {Vec3} rayFromWorld
-	 */
-	this.rayFromWorld = new Vec3();
+  /**
+   * @property {Vec3} rayFromWorld
+   */
+  this.rayFromWorld = new Vec3();
 
-	/**
-	 * @property {Vec3} rayToWorld
-	 */
-	this.rayToWorld = new Vec3();
+  /**
+   * @property {Vec3} rayToWorld
+   */
+  this.rayToWorld = new Vec3();
 
-	/**
-	 * @property {Vec3} hitNormalWorld
-	 */
-	this.hitNormalWorld = new Vec3();
+  /**
+   * @property {Vec3} hitNormalWorld
+   */
+  this.hitNormalWorld = new Vec3();
 
-	/**
-	 * @property {Vec3} hitPointWorld
-	 */
-	this.hitPointWorld = new Vec3();
+  /**
+   * @property {Vec3} hitPointWorld
+   */
+  this.hitPointWorld = new Vec3();
 
-	/**
-	 * @property {boolean} hasHit
-	 */
-	this.hasHit = false;
+  /**
+   * @property {boolean} hasHit
+   */
+  this.hasHit = false;
 
-	/**
-	 * The hit shape, or null.
-	 * @property {Shape} shape
-	 */
-	this.shape = null;
+  /**
+   * The hit shape, or null.
+   * @property {Shape} shape
+   */
+  this.shape = null;
 
-	/**
-	 * The hit body, or null.
-	 * @property {Body} body
-	 */
-	this.body = null;
+  /**
+   * The hit body, or null.
+   * @property {Body} body
+   */
+  this.body = null;
 
-	/**
-	 * The index of the hit triangle, if the hit shape was a trimesh.
-	 * @property {number} hitFaceIndex
-	 * @default -1
-	 */
-	this.hitFaceIndex = -1;
+  /**
+   * The index of the hit triangle, if the hit shape was a trimesh.
+   * @property {number} hitFaceIndex
+   * @default -1
+   */
+  this.hitFaceIndex = -1;
 
-	/**
-	 * Distance to the hit. Will be set to -1 if there was no hit.
-	 * @property {number} distance
-	 * @default -1
-	 */
-	this.distance = -1;
+  /**
+   * Distance to the hit. Will be set to -1 if there was no hit.
+   * @property {number} distance
+   * @default -1
+   */
+  this.distance = -1;
 
-	/**
-	 * If the ray should stop traversing the bodies.
-	 * @private
-	 * @property {Boolean} _shouldStop
-	 * @default false
-	 */
-	this._shouldStop = false;
+  /**
+   * If the ray should stop traversing the bodies.
+   * @private
+   * @property {Boolean} _shouldStop
+   * @default false
+   */
+  this._shouldStop = false;
 }
 
 /**
@@ -1991,23 +1991,23 @@ function RaycastResult(){
  * @method reset
  */
 RaycastResult.prototype.reset = function () {
-	this.rayFromWorld.setZero();
-	this.rayToWorld.setZero();
-	this.hitNormalWorld.setZero();
-	this.hitPointWorld.setZero();
-	this.hasHit = false;
-	this.shape = null;
-	this.body = null;
-	this.hitFaceIndex = -1;
-	this.distance = -1;
-	this._shouldStop = false;
+  this.rayFromWorld.setZero();
+  this.rayToWorld.setZero();
+  this.hitNormalWorld.setZero();
+  this.hitPointWorld.setZero();
+  this.hasHit = false;
+  this.shape = null;
+  this.body = null;
+  this.hitFaceIndex = -1;
+  this.distance = -1;
+  this._shouldStop = false;
 };
 
 /**
  * @method abort
  */
 RaycastResult.prototype.abort = function(){
-	this._shouldStop = true;
+  this._shouldStop = true;
 };
 
 /**
@@ -2021,21 +2021,21 @@ RaycastResult.prototype.abort = function(){
  * @param {number} distance
  */
 RaycastResult.prototype.set = function(
-	rayFromWorld,
-	rayToWorld,
-	hitNormalWorld,
-	hitPointWorld,
-	shape,
-	body,
-	distance
+  rayFromWorld,
+  rayToWorld,
+  hitNormalWorld,
+  hitPointWorld,
+  shape,
+  body,
+  distance
 ){
-	this.rayFromWorld.copy(rayFromWorld);
-	this.rayToWorld.copy(rayToWorld);
-	this.hitNormalWorld.copy(hitNormalWorld);
-	this.hitPointWorld.copy(hitPointWorld);
-	this.shape = shape;
-	this.body = body;
-	this.distance = distance;
+  this.rayFromWorld.copy(rayFromWorld);
+  this.rayToWorld.copy(rayToWorld);
+  this.hitNormalWorld.copy(hitNormalWorld);
+  this.hitPointWorld.copy(hitPointWorld);
+  this.shape = shape;
+  this.body = body;
+  this.distance = distance;
 };
 },{"../math/Vec3":30}],11:[function(_dereq_,module,exports){
 var Shape = _dereq_('../shapes/Shape');
@@ -4616,18 +4616,18 @@ module.exports = Transform;
 function Transform(options) {
     options = options || {};
 
-	/**
-	 * @property {Vec3} position
-	 */
-	this.position = new Vec3();
+  /**
+   * @property {Vec3} position
+   */
+  this.position = new Vec3();
     if(options.position){
         this.position.copy(options.position);
     }
 
-	/**
-	 * @property {Quaternion} quaternion
-	 */
-	this.quaternion = new Quaternion();
+  /**
+   * @property {Quaternion} quaternion
+   */
+  this.quaternion = new Quaternion();
     if(options.quaternion){
         this.quaternion.copy(options.quaternion);
     }
@@ -5249,7 +5249,7 @@ function Body(options){
      * Whether to produce contact forces when in contact with other bodies. Note that contacts will be generated, but they will be disabled.
      * @property {Number} collisionResponse
      */
-	this.collisionResponse = true;
+  this.collisionResponse = true;
 
     /**
      * @property position
@@ -6901,13 +6901,13 @@ var Material = _dereq_('../material/Material');
  */
 function SPHSystem(){
     this.particles = [];
-	
+  
     /**
      * Density of the system (kg/m3).
      * @property {number} density
      */
     this.density = 1;
-	
+  
     /**
      * Distance below which two particles are considered to be neighbors.
      * It should be adjusted so there are about 15-20 neighbor particles within this radius.
@@ -6915,7 +6915,7 @@ function SPHSystem(){
      */
     this.smoothingRadius = 1;
     this.speedOfSound = 1;
-	
+  
     /**
      * Viscosity of the system.
      * @property {number} viscosity
@@ -12855,16 +12855,16 @@ function World(){
 
     /**
      * @property {ArrayCollisionMatrix} collisionMatrix
-	 * @type {ArrayCollisionMatrix}
-	 */
-	this.collisionMatrix = new ArrayCollisionMatrix();
+   * @type {ArrayCollisionMatrix}
+   */
+  this.collisionMatrix = new ArrayCollisionMatrix();
 
     /**
      * CollisionMatrix from the previous step.
      * @property {ArrayCollisionMatrix} collisionMatrixPrevious
-	 * @type {ArrayCollisionMatrix}
-	 */
-	this.collisionMatrixPrevious = new ArrayCollisionMatrix();
+   * @type {ArrayCollisionMatrix}
+   */
+  this.collisionMatrixPrevious = new ArrayCollisionMatrix();
 
     /**
      * All added materials
@@ -12961,10 +12961,10 @@ World.prototype.numObjects = function(){
  * @method collisionMatrixTick
  */
 World.prototype.collisionMatrixTick = function(){
-	var temp = this.collisionMatrixPrevious;
-	this.collisionMatrixPrevious = this.collisionMatrix;
-	this.collisionMatrix = temp;
-	this.collisionMatrix.reset();
+  var temp = this.collisionMatrixPrevious;
+  this.collisionMatrixPrevious = this.collisionMatrix;
+  this.collisionMatrix = temp;
+  this.collisionMatrix.reset();
 };
 
 /**
@@ -12989,7 +12989,7 @@ World.prototype.add = World.prototype.addBody = function(body){
         body.initAngularVelocity.copy(body.angularVelocity);
         body.initQuaternion.copy(body.quaternion);
     }
-	this.collisionMatrix.setNumObjects(this.bodies.length);
+  this.collisionMatrix.setNumObjects(this.bodies.length);
     this.addBodyEvent.body = body;
     this.dispatchEvent(this.addBodyEvent);
 };
@@ -13416,41 +13416,41 @@ World.prototype.internalStep = function(dt){
             }
         }
 
-		// c.setSpookParams(
+    // c.setSpookParams(
   //           cm.contactEquationStiffness,
   //           cm.contactEquationRelaxation,
   //           dt
   //       );
 
-		solver.addEquation(c);
+    solver.addEquation(c);
 
-		// // Add friction constraint equation
-		// if(mu > 0){
+    // // Add friction constraint equation
+    // if(mu > 0){
 
-		// 	// Create 2 tangent equations
-		// 	var mug = mu * gnorm;
-		// 	var reducedMass = (bi.invMass + bj.invMass);
-		// 	if(reducedMass > 0){
-		// 		reducedMass = 1/reducedMass;
-		// 	}
-		// 	var pool = frictionEquationPool;
-		// 	var c1 = pool.length ? pool.pop() : new FrictionEquation(bi,bj,mug*reducedMass);
-		// 	var c2 = pool.length ? pool.pop() : new FrictionEquation(bi,bj,mug*reducedMass);
-		// 	this.frictionEquations.push(c1, c2);
+    //  // Create 2 tangent equations
+    //  var mug = mu * gnorm;
+    //  var reducedMass = (bi.invMass + bj.invMass);
+    //  if(reducedMass > 0){
+    //    reducedMass = 1/reducedMass;
+    //  }
+    //  var pool = frictionEquationPool;
+    //  var c1 = pool.length ? pool.pop() : new FrictionEquation(bi,bj,mug*reducedMass);
+    //  var c2 = pool.length ? pool.pop() : new FrictionEquation(bi,bj,mug*reducedMass);
+    //  this.frictionEquations.push(c1, c2);
 
-		// 	c1.bi = c2.bi = bi;
-		// 	c1.bj = c2.bj = bj;
-		// 	c1.minForce = c2.minForce = -mug*reducedMass;
-		// 	c1.maxForce = c2.maxForce = mug*reducedMass;
+    //  c1.bi = c2.bi = bi;
+    //  c1.bj = c2.bj = bj;
+    //  c1.minForce = c2.minForce = -mug*reducedMass;
+    //  c1.maxForce = c2.maxForce = mug*reducedMass;
 
-		// 	// Copy over the relative vectors
-		// 	c1.ri.copy(c.ri);
-		// 	c1.rj.copy(c.rj);
-		// 	c2.ri.copy(c.ri);
-		// 	c2.rj.copy(c.rj);
+    //  // Copy over the relative vectors
+    //  c1.ri.copy(c.ri);
+    //  c1.rj.copy(c.rj);
+    //  c2.ri.copy(c.ri);
+    //  c2.rj.copy(c.rj);
 
-		// 	// Construct tangents
-		// 	c.ni.tangents(c1.t, c2.t);
+    //  // Construct tangents
+    //  c.ni.tangents(c1.t, c2.t);
 
   //           // Set spook params
   //           c1.setSpookParams(cm.frictionEquationStiffness, cm.frictionEquationRelaxation, dt);
@@ -13458,10 +13458,10 @@ World.prototype.internalStep = function(dt){
 
   //           c1.enabled = c2.enabled = c.enabled;
 
-		// 	// Add equations to solver
-		// 	solver.addEquation(c1);
-		// 	solver.addEquation(c2);
-		// }
+    //  // Add equations to solver
+    //  solver.addEquation(c1);
+    //  solver.addEquation(c2);
+    // }
 
         if( bi.allowSleep &&
             bi.type === Body.DYNAMIC &&
@@ -13490,7 +13490,7 @@ World.prototype.internalStep = function(dt){
         }
 
         // Now we know that i and j are in contact. Set collision matrix state
-		this.collisionMatrix.set(bi, bj, true);
+    this.collisionMatrix.set(bi, bj, true);
 
         if (!this.collisionMatrixPrevious.get(bi, bj)) {
             // First contact!
