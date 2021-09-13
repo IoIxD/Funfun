@@ -26,14 +26,14 @@ export function ballInit() {
         ball = balltmp;
         ball.castShadow = true;
         // Add the collision ball
-        var ballshape = new CANNON.Sphere(1);
+        var ballshape = new CANNON.Sphere(.5);
         let mass = 5;
-        ballc = new CANNON.Body({ mass, ballshape });
+        ballc = new CANNON.Body({  mass: mass, shape: ballshape, force: de.plane.position, position: new CANNON.Vec3(0,6,0) });
         ballc.velocity.set(0,0,0);
-        ballc.collisionResponse = 1;
-        ballc.position.y = 5;
+        ballc.collisionFilterMask = 5;
+        ballc.collisionResponse = false;
         ballc.linearDamping = 0;
-        ballc.addEventListener("collide", function(e){ console.log("sphere collided"); } );
+        ballc.addEventListener("collide", function(e){ console.log(e); } );
         m.world.addBody(ballc);
 	  },
 	    // called when loading is in progresses

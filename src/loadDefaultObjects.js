@@ -15,7 +15,7 @@ export const axis = new THREE.AxesHelper(999999);
 export const geometry = new THREE.PlaneGeometry( 1, 1);
 export const material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
 export const plane = new THREE.Mesh( geometry, material );
-export const planecshape = new CANNON.Plane(5);
+export const planecshape = new CANNON.Plane();
 export const planecmass = 0; export let planec = 0;
 
 
@@ -24,10 +24,11 @@ export function ldoInit() {
     m.scene.add( ambientLight );
     m.scene.add(axis);
     m.scene.add(plane);
-    planec = new CANNON.Body({ type: 0, planecshape });
-    planec.collisionResponse = 1;
+    planec = new CANNON.Body({ mass: planecmass, shape: planecshape, initPosition: new CANNON.Vec3(0,-1,0) });
+    planec.quaternion.setFromAxisAngle(new CANNON.Vec3(1,0,0), THREE.Math.degToRad(90));
+    planec.collisionResponse = false;
+    planec.collisionFilterMask = 5;
     planec.linearDamping = 0;
-    planec.position.y = 2;
     plane.position.copy(planec.position);
     m.world.addBody(planec);
     console.log(planec);
