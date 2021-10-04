@@ -6,7 +6,7 @@
 
   export const scene = new THREE.Scene();
   export const world = new CANNON.World({gravity: new CANNON.Vec3(0, -9.82, 0)});
-  cannonDebugger(scene, world.bodies, {color: 0xff0000, scale: 2});
+  //cannonDebugger(scene, world.bodies, {color: 0xff0000, scale: 2});
   
   export const camera = new THREE.PerspectiveCamera( 45, 640 / 480, 0.1, 1000 );
   scene.add(camera);

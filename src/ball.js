@@ -25,16 +25,10 @@ export function ballInit() {
 	    m.scene.add(balltmp.scene);
         ball = balltmp;
         ball.castShadow = true;
-        // Add the collision ball
-        var ballshape = new CANNON.Sphere(.5);
-        let mass = 5;
-        ballc = new CANNON.Body({  mass: mass, shape: ballshape, force: de.plane.position, position: new CANNON.Vec3(0,6,0) });
-        ballc.velocity.set(0,0,0);
-        ballc.collisionFilterMask = 5;
-        ballc.collisionResponse = false;
-        ballc.linearDamping = 0;
-        ballc.addEventListener("collide", function(e){ console.log(e); } );
+        ballc = new CANNON.Body({type: CANNON.Body.DYNAMIC, mass: 0.45, shape: new CANNON.Sphere(.5), position: new CANNON.Vec3(0,6,0) });
+        ballc.addEventListener('collide', function() {gravity = 0; speedY = 0;jumpState = 0; heldSpaceTicks = 0})
         m.world.addBody(ballc);
+        console.log(ballc);
 	  },
 	    // called when loading is in progresses
 	    function ( xhr ) {
@@ -56,16 +50,16 @@ export function ballUpdate() {
     speed = Math.abs(speedX+speedZ);
     storedSpeed = Math.abs(storedSpeedX+storedSpeedZ);
     // If the player has pressed space and they're landed, start to increase their vertical velocity.
-    if(c.heldSpace == 1 && jumpState == 0) {speedY += ((c.heldSpace) / 8);}
+    if(c.heldSpace == 1 && jumpState == 0) {speedY += ((c.heldSpace) / 10);}
     // The player can hold space for a maximum of 25 ticks to get higher jump speeds. 
-    if (heldSpaceTicks <= 25) {heldSpaceTicks += c.heldSpace} else {jumpState = 2;}
+    if (heldSpaceTicks <= 25) {heldSpaceTicks += c.heldShift} else {jumpState = 2;}
     heldShiftTicks += (storedSpeedX)/16*Math.abs(c.heldShift-1); // The limit for shift ticks is the speed limit.
     // Increase their gravity value by that final velocity, unless it's above 0.75
     if(gravity <= 0.75 && jumpState <= 1) {gravity += speedY}
     // If it is, or if they've release spaced, then they should be put into landing mode.
     if(gravity >= 0.75 || (c.heldSpace == 0 && jumpState == 1)) {jumpState = 2;}
     // If they're in landing mode, gradually decrease their falling speed (slower depending on how long they held space)
-    if(jumpState == 2) {gravity -= 0.5/heldSpaceTicks;}
+    if(jumpState == 2 && gravity > 0) {gravity -= 0.5/heldSpaceTicks;}
     // At this speed, the player should lose control
     // Max speed achievable by charging; if this is reached, display key inputs until the player slows down.
     if(storedSpeedX >= 3) {storedSpeedX = 3; moveEnable = 0;}; if(storedSpeedX <= -3) {storedSpeedX = -3; moveEnable = 0;};
@@ -79,14 +73,14 @@ export function ballUpdate() {
     	speedX = (storedSpeedX * c.heldShift); speedZ = (storedSpeedZ * c.heldShift);
     	ballc.position.x -= speedX; ball.scene.rotateOnWorldAxis(new THREE.Vector3(1,0,0), storedSpeedZ);
     	ballc.position.z += speedZ; ball.scene.rotateOnWorldAxis(new THREE.Vector3(0,0,1), storedSpeedX);
+        ballc.velocity.y += gravity;
     	if(ballc.position.x >= 25 || ballc.position.x <= -25) {ballc.position.x *= -1;}
     	if(ballc.position.z >= 25 || ballc.position.z <= -25) {ballc.position.z *= -1;}
     	ball.scene.position.copy(ballc.position);
-        ball.scene.quaternion.copy(ballc.quaternion);
     	//gravity = 0; speedY = 0; ballc.position.y = 0; jumpState = 0; heldSpaceTicks = 0;}
         document.querySelector('.bar .fill').style.width = 21*storedSpeed+"px";
         if(!moveEnable) {document.querySelector('.bar .fill').style.filter = "saturate("+(100-(storedSpeed*33))+"%)"}
-        document.querySelector('.debug').innerHTML = heldShiftTicks/350;
+        document.querySelector('.debug').innerHTML = heldShiftTicks;
     	break label;
     } catch(ex) {console.log(ex)}
 }

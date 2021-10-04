@@ -4,14 +4,15 @@ export let lastCallTime;
 
   // Draw Function
   export function animate() {
-    const time = performance.now() / 1000;
-    if (!lastCallTime) {
-      m.world.step(1 / 60);
-    } else {
-      m.world.step(1 / 60, time - lastCallTime)
-    }
-    lastCallTime = time;
     b.ballUpdate();
     requestAnimationFrame(animate);
+    const timeStep = 1 / 60;
     m.renderer.render(m.scene, m.camera);
+    const time = performance.now() / 1000;
+    if (!lastCallTime) {
+      m.world.step(timeStep);
+    } else {
+      m.world.step(timeStep, time - lastCallTime)
+    }
+    lastCallTime = time;
   }

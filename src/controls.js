@@ -4,18 +4,22 @@ document.addEventListener('keydown', function(e) {
   switch(e.key) {
     case 'ArrowRight':
     case 'd':
+    case 'D':
       heldRight = 1;
       break;
     case 'ArrowLeft':
     case 'a':
+    case 'A':
       heldLeft = 1;
       break;
     case 'ArrowUp':
     case 'w':
+    case 'W':
       heldUp = 1;
       break;
     case 'ArrowDown':
     case 's':
+    case 'S':
       heldDown = 1;
       break;
     case ' ':
@@ -31,18 +35,22 @@ document.addEventListener('keyup', function(e) {
   switch(e.key) {
     case 'ArrowRight':
     case 'd':
+    case 'D':
       heldRight = 0;
       break;
     case 'ArrowLeft':
     case 'a':
+    case 'A':
       heldLeft = 0;
       break;
     case 'ArrowUp':
     case 'w':
+    case 'W':
       heldUp = 0;
       break;
     case 'ArrowDown':
     case 's':
+    case 'S':
       heldDown = 0;
       break;
     case ' ':
